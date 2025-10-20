@@ -43,7 +43,7 @@ func (p *Processor) parse(rawMsg []byte) (models.UniversalTrade, error) {
 	}
 
 	if err := json.Unmarshal(rawMsg, &baseEvent); err != nil {
-		slog.Error("Could not parse from JSON", slog.String("error", err.Error()))
+		slog.Error("❌Could not parse from JSON", slog.String("error", err.Error()))
 		return models.UniversalTrade{}, err
 	}
 
@@ -54,7 +54,7 @@ func (p *Processor) parse(rawMsg []byte) (models.UniversalTrade, error) {
 	case "aggTrade":
 		var aggTrade models.AggTrade
 		if err := json.Unmarshal(rawMsg, &aggTrade); err != nil {
-			slog.Error("Could not parse from JSON", slog.String("error", err.Error()))
+			slog.Error("❌Could not parse from JSON", slog.String("error", err.Error()))
 			return models.UniversalTrade{}, err
 		}
 
@@ -66,7 +66,7 @@ func (p *Processor) parse(rawMsg []byte) (models.UniversalTrade, error) {
 	case "miniTicker":
 		var miniTicker models.MiniTicker
 		if err := json.Unmarshal(rawMsg, &miniTicker); err != nil {
-			slog.Error("Could not parse JSON", slog.String("error", err.Error()))
+			slog.Error("❌Could not parse JSON", slog.String("error", err.Error()))
 			return models.UniversalTrade{}, err
 		}
 

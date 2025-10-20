@@ -42,7 +42,7 @@ func (c *WSclient) Start(ctx context.Context) {
 		default:
 			err := c.connect()
 			if err != nil {
-				log.Printf("Connection failed: %v. Retrying in %v", err, currentDelay)
+				log.Printf("❌Connection failed: %v. Retrying in %v", err, currentDelay)
 
 				// Ждем с проверкой контекста
 				select {
@@ -112,7 +112,7 @@ func (c *WSclient) readMessage(ctx context.Context) {
 			_, msg, err := c.conn.ReadMessage()
 			if err != nil {
 				if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
-					slog.Error("Read message error", slog.String("error", err.Error()))
+					slog.Error("❌Read message error", slog.String("error", err.Error()))
 				}
 				return // Выходим при ошибке чтения
 			}
