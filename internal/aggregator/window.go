@@ -30,7 +30,7 @@ type Window struct {
 	Trades    int
 	StartTime time.Time
 	EndTime   time.Time
-	mu        sync.Mutex
+	mu        sync.Mutex  // будет использоваться потом для синхронизации
 }
 
 func (a *Aggregator) Start() {
@@ -46,8 +46,10 @@ func New(in <-chan models.UniversalTrade) *Aggregator {
 }
 
 func (a *Aggregator) processIncoming() {
-	for range a.inputChan {
-
+	for trade := range a.inputChan {
+		if a.ShouldProcess(&trade) {
+			//a.processTrade(trade) типо обрабатываем только значимые значения
+		}
 	}
 
 }
@@ -59,6 +61,11 @@ func (a *Aggregator) ShouldProcess(trade *models.UniversalTrade) bool {
 		return true
 	}
 	priceInFloat := lastPrice.(float64)
-	change := math.Abs((trade.Price - priceInFloat) / priceInFloat)
-	return change >= a.priceChangeThreshold
+	currentPrice := trade.Price
+	change := math.Abs((currentPrice - priceInFloat) / priceInFloat)
+	if change >= a.priceChangeThreshold {
+		a.lastPrices.Store(trade.Symbol, currentPrice)
+		return true
+	}
+	return false
 }

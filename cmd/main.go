@@ -34,7 +34,7 @@ func main() {
 
 	// Websocket client (url can be changed)
 	ws := websocket.New("wss://example.com/ws", rawMessages, 5*time.Second)
-	go ws.Start()
+	go ws.Start(ctx)
 
 	// Processor (bytes -> models.UniversalTrade)
 	proc := processor.New(rawMessages, procOut)
@@ -47,4 +47,7 @@ func main() {
 	// Wait until context canceled
 	<-ctx.Done()
 	fmt.Println("shutting down")
+	
+	// задержка для graceful shutdown (опционально) 
+	time.Sleep(100 * time.Millisecond)
 }
