@@ -1,6 +1,7 @@
 package processor
 
 import (
+	"context"
 	"encoding/json"
 	"log/slog"
 
@@ -19,21 +20,37 @@ func New(inChan chan []byte, outChan chan models.UniversalTrade) *Processor {
 	}
 }
 
-func (p *Processor) Start() {
+func (p *Processor) Start(ctx context.Context) {
+
 	for range 10 {
-		go p.worker()
+		go p.worker(ctx)
 	}
+
+	<- ctx.Done() // опционально закрыть outputChan
 }
 
-func (p *Processor) worker() {
-	for rawMsg := range p.inputChan {
+func (p *Processor) worker(ctx context.Context) {
+	for {
+		select {
+		case <- ctx.Done():
+			return
+		
+		case rawMsg, ok := <- p.inputChan:
+			if !ok {
+				return
+			}
 
-		trade, err := p.parse(rawMsg)
-		if err != nil {
-			continue
+			trade, err := p.parse(rawMsg)
+			if err != nil {
+				continue
+			}
+			select {
+			case <- ctx.Done():
+				return
+			default:
+				p.outputChan <- trade
+			}
 		}
-
-		p.outputChan <- trade
 	}
 }
 
