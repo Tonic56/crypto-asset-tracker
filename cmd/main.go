@@ -47,7 +47,7 @@ func main() {
 	// Wait until context canceled
 	<-ctx.Done()
 	fmt.Println("shutting down")
-	
-	// задержка для graceful shutdown (опционально) 
+
+	// задержка для graceful shutdown (опционально)
 	time.Sleep(100 * time.Millisecond)
 }

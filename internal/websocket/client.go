@@ -42,7 +42,7 @@ func (c *WSclient) Start(ctx context.Context) {
 		default:
 			err := c.connect()
 			if err != nil {
-				log.Printf("❌Connection failed: %v. Retrying in %v", err, currentDelay)
+				log.Printf("❌Connection failed: %v. Retrying in %v. Url: %v", err, currentDelay, c.url)
 
 				// Ждем с проверкой контекста
 				select {
