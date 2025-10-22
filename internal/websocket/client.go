@@ -17,11 +17,11 @@ type WSclient struct {
 	reconnectDelay time.Duration
 }
 
-func New(url string, output chan<- []byte, time time.Duration) *WSclient {
+func New(url string, output chan<- []byte, reconnectDelay time.Duration) *WSclient {
 	return &WSclient{
 		url:            url,
 		outputChan:     output,
-		reconnectDelay: time,
+		reconnectDelay: reconnectDelay,
 		stopChan:       make(chan struct{}),
 	}
 }

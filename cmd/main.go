@@ -38,7 +38,7 @@ func main() {
 
 	// Processor (bytes -> models.UniversalTrade)
 	proc := processor.New(rawMessages, procOut)
-	go proc.Start()
+	go proc.Start(ctx)
 
 	// Aggregator skeleton — wire input channel
 	agg := aggregator.New(procOut)
