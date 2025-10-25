@@ -33,20 +33,35 @@ func main() {
 	procOut := make(chan models.UniversalTrade, 100)
 
 	// Websocket client (url can be changed)
-	ws := websocket.New("wss://example.com/ws", rawMessages, 5*time.Second)
+	ws := websocket.New("wss://stream.binance.com:9443/stream?streams=btcusdt@aggTrade/ethusdt@aggTrade/bnbusdt@aggTrade", rawMessages, 5*time.Second)
 	go ws.Start(ctx)
 
 	// Processor (bytes -> models.UniversalTrade)
 	proc := processor.New(rawMessages, procOut)
 	go proc.Start(ctx)
 
+	windowsChan := make(chan *models.Window)
 	// Aggregator skeleton — wire input channel
-	agg := aggregator.New(procOut)
-	go agg.Start()
+	agg := aggregator.NewWindowAggregator(procOut, windowsChan)
+	go agg.Start(ctx)
 
+	go func() {
+		for window := range windowsChan {
+			fmt.Printf(
+				"✅ Candle close: %s [%s] | Open: %.2f, High: %.2f, Low: %.2f, Close: %.2f | Volume: %f\n",
+				window.Symbol,
+				window.Interval,
+				window.Open,
+				window.High,
+				window.Low,
+				window.Close,
+				window.Quantity,
+			)
+		}
+	}()
 	// Wait until context canceled
 	<-ctx.Done()
-	fmt.Println("shutting down")
+	fmt.Println("\nshutting down")
 
 	// задержка для graceful shutdown (опционально)
 	time.Sleep(100 * time.Millisecond)
