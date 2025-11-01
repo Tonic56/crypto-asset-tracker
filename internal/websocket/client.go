@@ -13,7 +13,7 @@ const (
 
 	// All - все монеты, Several - определенные
 	// @3000 -> присылает окно каждые 3 секунды (хотя по факту куда реже)
-	MiniTickerAllURL     = "wss://data-stream.binance.vision/ws/!miniTicker@arr@1000ms"
+	MiniTickerAllURL     = "wss://stream.binance.com:443/ws/!miniTicker@arr@1000ms"
 	MiniTickerSeveralURL = "wss://stream.binance.com:9443/stream?streams=btcusdt@miniTicker/ethusdt@miniTicker/bnbusdt@miniTicker"
 )
 
